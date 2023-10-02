@@ -8,7 +8,6 @@ app.get("/api" , getEndpoints)
 app.get("/api/articles/:article_id", getArticleById)
 
 app.use((err, req, res, next) => {
-    console.log(err)
     if (err.code === "22P02"){
         res.status(400).send({message : "Bad Request!"})
     }
@@ -18,7 +17,12 @@ app.use((err, req, res, next) => {
     if (err.status){
         res.status(err.status).send({message: err.message})
     }
-    next(err)
+    
+})
+
+app.use((err, req, res, next) => {
+    console.log(err)
+    res.status(500)
 })
 
 app.all("/*", (req, res, next) => {
