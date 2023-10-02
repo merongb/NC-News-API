@@ -12,6 +12,6 @@ exports.getTopics = (req, res, next) => {
 }
 
 exports.getEndpoints = (req, res) => {
-   res.send(endpoints)
+   res.status(200).send(endpoints)
 }
 

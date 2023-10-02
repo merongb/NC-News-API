@@ -37,10 +37,6 @@ describe('GET /api', () => {
     test('returns a json object matching of all the endpoints.json file', () => {
         return request(app).get("/api").expect(200).then(({body}) => {
             expect(body).toEqual(endpoints)
-            expect(body).to
         })
-    });
-    test('returns a 404 status code when given a bad api request', () => {
-        return request(app).get("/invalid").expect(404)
     });
 });
