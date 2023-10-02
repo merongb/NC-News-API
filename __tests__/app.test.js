@@ -42,28 +42,33 @@ describe('GET /api', () => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+describe('GET /api/articles/:article_id', () => {
+    test('returns a 200 status code', () => {
+        return request(app).get("/api/articles/1").expect(200)
+    });
+    test('returns an article by the id with the following properties', () => {
+        return request(app).get("/api/articles/1").expect(200).then(({body}) => {
+           expect(body.article).toHaveProperty("author", expect.any(String));
+           expect(body.article).toHaveProperty("title", expect.any(String));
+           expect(body.article).toHaveProperty("article_id", 1);
+           expect(body.article).toHaveProperty("body", expect.any(String));
+           expect(body.article).toHaveProperty("topic", expect.any(String));
+           expect(body.article).toHaveProperty("created_at", expect.any(String));
+           expect(body.article).toHaveProperty("votes", expect.any(Number));
+           expect(body.article).toHaveProperty("article_img_url", expect.any(String));
+        })
+    });
+    test('returns 404 error when id number doesnt exist with a message', () => {
+        return request(app).get("/api/articles/9999").expect(404).then(({body}) => {
+            expect(body.message).toBe("Article Does Not Exist!")
+        })
+    });
+    test('returns a 400 bad request when given an invalid data type', () => {
+        return request(app).get("/api/articles/DROPDATABASE").expect(400).then(({body}) => {
+            expect(body.message).toBe("Bad Request!")
+        })
+    });
+});
 
 describe('GET /api/articles', () => {
     test('returns a 200 status code', () => {
