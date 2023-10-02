@@ -40,3 +40,38 @@ describe('GET /api', () => {
         })
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+describe('GET /api/articles', () => {
+    test('returns a 200 status code', () => {
+        return request(app).get("/api/articles").expect(200)  
+    });
+    test('returns an array of articles which have the following properties', () => {
+        return request(app).get("/api/articles").expect(200).then(({body}) => {
+            expect(body.articles).toHaveProperty("author")
+        })
+    });
+});
