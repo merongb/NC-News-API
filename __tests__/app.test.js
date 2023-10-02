@@ -3,8 +3,8 @@ const request = require("supertest")
 const db = require("../db/connection")
 const seed = require("../db/seeds/seed")
 const testData = require("../db/data/test-data/index")
-const { getEndpoints } = require("../db/app.controllers")
 const endpoints = require("../endpoints.json")
+const jestSorted = require("jest-sorted")
 
 beforeEach(() => {
     return seed(testData)
@@ -71,7 +71,21 @@ describe('GET /api/articles', () => {
     });
     test('returns an array of articles which have the following properties', () => {
         return request(app).get("/api/articles").expect(200).then(({body}) => {
-            
+            expect(body.articles[0]).toHaveProperty("author", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("title", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("article_id", expect.any(Number))
+            expect(body.articles[0]).toHaveProperty("topic", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("created_at", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("votes", expect.any(Number))
+            expect(body.articles[0]).toHaveProperty("article_img_url", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("count", expect.any(String))
+        })
+    });
+    test('returns the articles in descending date order and removes the body property', () => {
+        return request(app).get("/api/articles").expect(200).then(({body})=> {
+            expect(body.articles).toBeSortedBy("created_at", {descending : true})
+            expect(body.articles[0]).not.toHaveProperty("body")
+
         })
     });
 });
