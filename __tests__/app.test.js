@@ -7,7 +7,9 @@ const testData = require("../db/data/test-data/index")
 beforeEach(() => {
     return seed(testData)
 })
-
+afterAll(() => {
+    return db.end()
+})
 describe('GET /api/topics', () => {
     test('should return a 200 status code', () => {
         return request(app).get("/api/topics").expect(200)
