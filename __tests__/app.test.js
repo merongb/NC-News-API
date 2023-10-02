@@ -78,7 +78,7 @@ describe('GET /api/articles', () => {
             expect(body.articles[0]).toHaveProperty("created_at", expect.any(String))
             expect(body.articles[0]).toHaveProperty("votes", expect.any(Number))
             expect(body.articles[0]).toHaveProperty("article_img_url", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("count", expect.any(String))
+            expect(body.articles[0]).toHaveProperty("comment_count", expect.any(String))
         })
     });
     test('returns the articles in descending date order and removes the body property', () => {
