@@ -1,3 +1,6 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+To clone and run this locall, install dotenv using "npm install dotenv" in the terminal.
+Then create two folders named ".env.test" and ".env.development".
+Add "PGDATABASE=nc_news" to the development folder.
+Add "PGDATABASE=nc_news_test" to the test folder.
