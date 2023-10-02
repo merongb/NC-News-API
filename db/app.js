@@ -8,7 +8,7 @@ app.get("/api/topics" , getTopics)
 
 app.use((err, req, res, next) => {
     console.log(err)
-    
+    res.status(500).send({message : "Server error"})
 })
 
 app.all("/*", (req, res, next) => {

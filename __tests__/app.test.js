@@ -16,10 +16,14 @@ describe('GET /api/topics', () => {
     });
     test('an array of topic objects, each of which should have the properties slug and description', () => {
         return request(app).get("/api/topics").expect(200).then(({body}) => {
+            expect(body.topics).toHaveLength(3)
             body.topics.forEach((topic) => {
                 expect(topic).toHaveProperty("slug", expect.any(String))
                 expect(topic).toHaveProperty("description", expect.any(String))
             })
         })
+    });
+    test('return a 404 error when given a wrong path ', () => {
+        return request(app).get("/api/banana").expect(404)
     });
 });
