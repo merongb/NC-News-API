@@ -127,3 +127,34 @@ describe('GET /api/article/:article_id/comments', () => {
         return request(app).get("/api/articles/999/comments").expect(404)
     });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('returns a 201 status code and the posted comment', () => {
+        const newComment = {
+            username: "rogersop",
+            body: "This article is very interesting, I wish they explored more about it or perhaps made a tv show"
+        }
+        return request(app).post(`/api/articles/2/comments`).send(newComment).expect(201).then(({body}) => {
+            expect(body.comment).toHaveProperty("body", "This article is very interesting, I wish they explored more about it or perhaps made a tv show");
+            expect(body.comment).toHaveProperty("article_id", 2);
+            expect(body.comment).toHaveProperty("author", "rogersop");
+            expect(body.comment).toHaveProperty("votes", 0)
+        })
+    });
+    test('returns a 404 status code if article id doesnt exist', () => {
+        const newComment = {
+            username: "rogersop",
+            body: "This article is very interesting, I wish they explored more about it or perhaps made a tv show"
+        }
+        return request(app).post(`/api/articles/999/comments`).send(newComment).expect(404)
+    });
+    test('returns 400 bad request if body doesnt have correct properties', () => {
+        const newComment = {
+            height: 200,
+            body: "This article is very interesting, I wish they explored more about it or perhaps made a tv show"
+        }
+        return request(app).post(`/api/articles/2/comments`).send(newComment).expect(400).then(({body}) => {
+            expect(body.message).toBe('Bad Request');
+        })
+    });
+});
