@@ -94,3 +94,37 @@ describe('GET /api/articles', () => {
         })
     });
 });
+
+describe('GET /api/article/:article_id/comments', () => {
+    test('returns 200 status code', () => {
+        return request(app).get("/api/articles/1/comments").expect(200)
+    });
+    test('returns an array of objects with the following properties', () => {
+        return request(app).get("/api/articles/1/comments").expect(200).then(({body}) => {
+            expect(body.comments[0]).toHaveProperty("comment_id", expect.any(Number));
+            expect(body.comments[0]).toHaveProperty("body", expect.any(String));
+            expect(body.comments[0]).toHaveProperty("article_id", 1);
+            expect(body.comments[0]).toHaveProperty("author", expect.any(String));
+            expect(body.comments[0]).toHaveProperty("votes", expect.any(Number));
+            expect(body.comments[0]).toHaveProperty("created_at", expect.any(String));
+            expect(body.comments).toBeSortedBy("created_at", {descending : true})
+        })
+    });
+    test('returns the comments with the most recent created first', () => {
+        return request(app).get("/api/articles/3/comments").expect(200).then(({body}) => {
+            console.log(body);
+            expect(body.comments).toBeSortedBy("created_at", {descending : true})
+        })
+    });
+    test('returns an empty array when article_id exists but has no comments', () => {
+        return request(app).get("/api/articles/2/comments").expect(200).then(({body}) => {
+            expect(body.comments).toEqual([])
+        })
+    });
+    test('returns 400 bad request when given the wrong data type', () => {
+        return request(app).get("/api/articles/DROPDATABASE/comments").expect(400)
+    });
+    test('returns 404 not found when article_id doesnt exist', () => {
+        return request(app).get("/api/articles/999/comments").expect(404)
+    });
+});
