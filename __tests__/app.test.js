@@ -98,7 +98,7 @@ describe('GET /api/articles', () => {
 describe('GET /api/article/:article_id/comments', () => {
     test('returns 200 status code and an array of objects with the following properties', () => {
         return request(app).get("/api/articles/1/comments").expect(200).then(({body}) => {
-            console.log(body.comments)
+            expect(body.comments).not.toHaveLength(0)
             body.comments.forEach((comment) => {
                 expect(comment).toHaveProperty("comment_id", expect.any(Number));
                 expect(comment).toHaveProperty("body", expect.any(String));
