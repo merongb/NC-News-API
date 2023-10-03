@@ -65,5 +65,27 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment to an article specified by the article id",
+    "example path" : "/api/articles/2/comments",
+    "exampleInput": {
+      "newComment" : {
+        "username": "rogersop",
+        "body": "This article is very interesting, I wish they explored more about it or perhaps made a tv show"
+    }
+   },
+    "exampleResponse": {
+      "comment": 
+        {
+          "comment_id": 19,
+          "body": "This article is very interesting, I wish they explored more about it or perhaps made a tv show",
+          "article_id": 2,
+          "author": "rogersop",
+          "votes": 0,
+          "created_at": "2020-09-19T23:10:00.000Z"
+        }
+      }
+   
   }
 }

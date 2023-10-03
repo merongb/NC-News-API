@@ -56,3 +56,30 @@ ORDER BY created_at DESC
     return rows
 })
 }
+
+exports.insertCommentByArticleId = (newComment,article_id) => {
+    const { username, body } = newComment
+
+
+return db.query(`
+INSERT INTO comments
+(author, body, article_id)
+VALUES
+($1, $2, $3)
+RETURNING *
+`, [username, body, article_id]).then(({rows}) => {
+    return rows[0]
+})
+} 
+
+exports.selectUsers = () => {
+    return db.query(`
+    SELECT * FROM users
+    `).then(({rows}) => {
+        if(rows.length === 0){
+            return Promise.reject({status : 404, message : "User Not Found"})
+        }
+        return rows
+    })
+    
+    }
