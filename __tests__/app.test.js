@@ -96,23 +96,22 @@ describe('GET /api/articles', () => {
 });
 
 describe('GET /api/article/:article_id/comments', () => {
-    test('returns 200 status code', () => {
-        return request(app).get("/api/articles/1/comments").expect(200)
-    });
-    test('returns an array of objects with the following properties', () => {
+    test('returns 200 status code and an array of objects with the following properties', () => {
         return request(app).get("/api/articles/1/comments").expect(200).then(({body}) => {
-            expect(body.comments[0]).toHaveProperty("comment_id", expect.any(Number));
-            expect(body.comments[0]).toHaveProperty("body", expect.any(String));
-            expect(body.comments[0]).toHaveProperty("article_id", 1);
-            expect(body.comments[0]).toHaveProperty("author", expect.any(String));
-            expect(body.comments[0]).toHaveProperty("votes", expect.any(Number));
-            expect(body.comments[0]).toHaveProperty("created_at", expect.any(String));
-            expect(body.comments).toBeSortedBy("created_at", {descending : true})
+            console.log(body.comments)
+            body.comments.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                expect(comment).toHaveProperty("body", expect.any(String));
+                expect(comment).toHaveProperty("article_id", 1);
+                expect(comment).toHaveProperty("author", expect.any(String));
+                expect(comment).toHaveProperty("votes", expect.any(Number));
+                expect(comment).toHaveProperty("created_at", expect.any(String));
+            })
         })
     });
+
     test('returns the comments with the most recent created first', () => {
         return request(app).get("/api/articles/3/comments").expect(200).then(({body}) => {
-            console.log(body);
             expect(body.comments).toBeSortedBy("created_at", {descending : true})
         })
     });
