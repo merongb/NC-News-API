@@ -71,3 +71,15 @@ RETURNING *
     return rows[0]
 })
 } 
+
+exports.selectUsers = () => {
+    return db.query(`
+    SELECT * FROM users
+    `).then(({rows}) => {
+        if(rows.length === 0){
+            return Promise.reject({status : 404, message : "User Not Found"})
+        }
+        return rows
+    })
+    
+    }

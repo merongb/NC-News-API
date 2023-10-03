@@ -1,4 +1,4 @@
-const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertCommentByArticleId } = require("./app.models")
+const { selectTopics, selectArticleById, selectArticles, selectCommentsByArticleId, insertCommentByArticleId, selectUsers } = require("./app.models")
 const endpoints = require('../endpoints.json')
 
 
@@ -56,13 +56,18 @@ exports.postCommentByArticleId =(req, res, next) => {
     if (!newComment || typeof newComment.username !== 'string' || typeof newComment.body !== 'string') {
         return res.status(400).send({ message: 'Bad Request' });
     }
-  
-    selectArticleById(article_id)
-    .then(() => {
-        insertCommentByArticleId(newComment,article_id).then((comment) => {
-            res.status(201).send({comment})
-        })
-    }).catch((err) => {
-        next(err)
-    })
+    selectArticleById(article_id).then(() => {
+    selectUsers(newComment.username).then((users) => {
+    if (users.length === 0) {
+        return res.status(404).send({ message: 'User Not Found' });
+                }
+        insertCommentByArticleId(newComment, article_id).then((comment) => {
+            res.status(201).send({ comment });
+                        }).catch((err) => {
+                            next(err);
+                        });
+                })
+        }) .catch((err) => {
+            next(err);
+        });
  }
