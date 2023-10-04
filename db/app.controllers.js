@@ -76,15 +76,19 @@ exports.postCommentByArticleId =(req, res, next) => {
     const { article_id } = req.params
     const  {inc_votes}  = req.body
 
-    if (typeof inc_votes !== "number"){
+       if (!inc_votes){
+        selectArticleById(article_id).then((article) => {
+            res.status(200).send({article})
+        })
+    }   else if (typeof inc_votes !== "number"){
         return res.status(400).send({ message: 'inc_votes must be a number' })
-    }
+    }   else {
 
-    selectArticleById(article_id).then(() => {
+   selectArticleById(article_id).then(() => {
         updateArticleVotesById(article_id, inc_votes).then((article) => {
             res.status(200).send({ article })
         })
-    }).catch((err) => {
+    }) .catch((err) => {
         next(err)
     })
-}
+}}

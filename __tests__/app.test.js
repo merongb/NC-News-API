@@ -175,7 +175,7 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
     });
 });
-describe('PATCH /api/article/:article_id/comments', () => {
+describe('PATCH /api/article/:article_id', () => {
     test('returns a 200 status code and the updated article', () => {
         const updatedVotes = {
             inc_votes: 5,
@@ -211,12 +211,21 @@ describe('PATCH /api/article/:article_id/comments', () => {
             })
         })
     });
-    test('returns 400 bad request and a message if inc_votes is missing', () => {
+    test('returns 200 and the article inc_votes is missing', () => {
         const updatedVotes = {
             DROPDATA: "DROPDATABASE"
         }
-        return request(app).patch("/api/articles/1").send(updatedVotes).expect(400).then(({body}) => {
-            expect(body.message).toBe("inc_votes must be a number");
+        return request(app).patch("/api/articles/1").send(updatedVotes).expect(200).then(({body}) => {
+            expect(body.article).toMatchObject({
+                article_id: 1,
+                title: 'Living in the shadow of a great man',
+                topic: 'mitch',
+                author: 'butter_bridge',
+                body: 'I find this existence challenging',
+                created_at: '2020-07-09T20:11:00.000Z',
+                votes: 100,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'    
+        })
         })
     });
     test('returns a 404 status code when article id doesnt exist', () => {
