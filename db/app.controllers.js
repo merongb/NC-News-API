@@ -6,7 +6,8 @@ const { selectTopics,
         selectUsers,
         updateArticleVotesById,
         removeCommentById,
-        selectCommentById } = require("./app.models")
+        selectCommentById,
+         } = require("./app.models")
 const endpoints = require('../endpoints.json')
 
 
@@ -101,14 +102,24 @@ exports.postCommentByArticleId =(req, res, next) => {
     })
 }}
 
-exports.deleteCommentById = (req, res , next) => {
-    const { comment_id } = req.params
+exports.deleteCommentById = async (req, res , next) => {
+    try {
+        const { comment_id } = req.params;
+    
+        await selectCommentById(comment_id);
+        await removeCommentById(comment_id);
+    
+        res.status(204).send();
+      } catch (err) {
+        next(err);
+      }
 
-    removeCommentById(comment_id).then(() => {
-    res.status(204).send()
-    })
-    .catch((err) => {
+}
+
+exports.getUsers = (req, res, next) => {
+    selectUsers().then((users) => {
+        res.status(200).send({ users })
+    }).catch((err) => {
         next(err)
     })
-
 }
