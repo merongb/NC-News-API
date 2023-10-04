@@ -271,7 +271,7 @@ describe('DELETE /api/comments/comment_id', () => {
 describe('GET /api/users', () => {
     test('returns 200 status code and an array of objects with the following properties', () => {
         return request(app).get("/api/users").expect(200).then(({body}) => {
-            expect(body.users).not.toHaveLength(0);
+            expect(body.users).toHaveLength(4);
             body.users.forEach((user) => {
                 expect(user).toHaveProperty("username", expect.any(String))
                 expect(user).toHaveProperty("name", expect.any(String))
