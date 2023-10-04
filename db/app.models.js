@@ -23,29 +23,34 @@ exports.selectArticleById = (article_id) => {
     })
  }
 
- exports.selectArticles = () => {
-    return db.query(`
-    SELECT
-    articles.author,
-    articles.title,
-    articles.article_id,
-    articles.topic,
-    articles.created_at,
-    articles.votes,
-    articles.article_img_url,
-    COUNT(comments.comment_id) AS comment_count
-  FROM
-    articles
-  LEFT JOIN
-    comments ON articles.article_id = comments.article_id
-  GROUP BY
-    articles.article_id
-  ORDER BY
-    articles.created_at DESC;
-    `).then(({rows}) => {
-        return rows
-    })
-}
+ exports.selectArticles = (topic) => {
+    const validTopics = {
+        cats: "cats",
+        mitch: "mitch",
+        paper: "paper"
+    }
+    
+    
+     let queryStr = `SELECT articles.author,articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+        COUNT(comments.comment_id) AS comment_count FROM articles
+      LEFT JOIN
+        comments ON articles.article_id = comments.article_id`
+        const values = []
+        if (topic in validTopics){
+            queryStr += ` WHERE articles.topic = $1`
+            values.push(topic)
+        }   else if (topic !== undefined && !(topic in validTopics)){
+            return Promise.reject({status: 404, message : "Topic Doesn't Exist!"})
+        }   
+        queryStr += ` GROUP BY
+        articles.article_id
+        ORDER BY
+        articles.created_at DESC;
+        `
+        return db.query(queryStr,values).then(({rows}) => {
+            return rows
+        })
+    }
 
 exports.selectCommentsByArticleId = (article_id) => {
 return db.query(`
