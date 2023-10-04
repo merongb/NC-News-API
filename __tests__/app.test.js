@@ -193,12 +193,12 @@ describe('PATCH /api/article/:article_id', () => {
             })
         })
     });
-    test('ignores properties that are not inv_votes', () => {
+test('ignores properties that are not inv_votes', () => {
         const updatedVotes = {
             inc_votes: 5,
             DROPDATA: "DROPDATABASE"
         }
-        return request(app).patch("/api/articles/1").send(updatedVotes).expect(200).then(({body}) => {
+    return request(app).patch("/api/articles/1").send(updatedVotes).expect(200).then(({body}) => {
             expect(body.article).toMatchObject({
                     article_id: 1,
                     title: 'Living in the shadow of a great man',
@@ -211,7 +211,7 @@ describe('PATCH /api/article/:article_id', () => {
             })
         })
     });
-    test('returns 200 and the article inc_votes is missing', () => {
+test('returns 200 and the article inc_votes is missing', () => {
         const updatedVotes = {
             DROPDATA: "DROPDATABASE"
         }
@@ -228,13 +228,13 @@ describe('PATCH /api/article/:article_id', () => {
         })
         })
     });
-    test('returns a 404 status code when article id doesnt exist', () => {
+test('returns a 404 status code when article id doesnt exist', () => {
         const updatedVotes = {
             inc_votes: 5,
         }
         return request(app).patch("/api/articles/999").send(updatedVotes).expect(404)
     });
-    test('returns a 400 status code when article id is not a number', () => {
+test('returns a 400 status code when article id is not a number', () => {
         const updatedVotes = {
             inc_votes: 5,
         }
@@ -242,7 +242,7 @@ describe('PATCH /api/article/:article_id', () => {
             expect(body.message).toBe("Bad Request!");
         })
     });
-    test('returns 400 status code when wrong data is passed ', () => {
+test('returns 400 status code when wrong data is passed ', () => {
         const updatedVotes = {
             inc_votes: "DROPDATABASE",
         }
@@ -252,3 +252,18 @@ describe('PATCH /api/article/:article_id', () => {
 
     });
 })
+describe('DELETE /api/comments/comment_id', () => {
+    test('returns a 204 status and no content', () => {
+        return request(app).delete("/api/comments/1").expect(204)
+    });
+    test('returns a 404 status with appropriate error message when given a non-existent comment id', () => {
+        return request(app).delete("/api/comments/99999").expect(404).then(({body}) => {
+            expect(body.message).toBe("Comment does not exist");
+        })
+    });
+    test('returns a 400 status with a message when given a invalid id', () => {
+        return request(app).delete("/api/comments/not-a-comment").expect(400).then(({body}) => {
+            expect(body.message).toBe("Bad Request!");
+        })
+    });
+});
