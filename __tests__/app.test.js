@@ -48,6 +48,7 @@ describe('GET /api/articles/:article_id', () => {
     });
     test('returns an article by the id with the following properties', () => {
         return request(app).get("/api/articles/1").expect(200).then(({body}) => {
+            console.log(body.article);
            expect(body.article).toHaveProperty("author", expect.any(String));
            expect(body.article).toHaveProperty("title", expect.any(String));
            expect(body.article).toHaveProperty("article_id", 1);
@@ -56,6 +57,7 @@ describe('GET /api/articles/:article_id', () => {
            expect(body.article).toHaveProperty("created_at", expect.any(String));
            expect(body.article).toHaveProperty("votes", expect.any(Number));
            expect(body.article).toHaveProperty("article_img_url", expect.any(String));
+           expect(body.article).toHaveProperty("comment_count", "11")
         })
     });
     test('returns 404 error when id number doesnt exist with a message', () => {
@@ -299,4 +301,7 @@ describe('GET /api/articles with queries', () => {
         })
     });
 
+});
+describe('Name of the group', () => {
+    
 });
