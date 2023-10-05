@@ -58,6 +58,12 @@ describe('GET /api/articles/:article_id', () => {
            expect(body.article).toHaveProperty("article_img_url", expect.any(String));
         })
     });
+    test('returns the comment count for the article by id ', () => {
+        return request(app).get("/api/articles/1").expect(200).then(({body}) => {
+            expect(body.article).toHaveProperty("comment_count", "11")  
+        })
+
+    });
     test('returns 404 error when id number doesnt exist with a message', () => {
         return request(app).get("/api/articles/9999").expect(404).then(({body}) => {
             expect(body.message).toBe("Article Does Not Exist!")
@@ -76,14 +82,17 @@ describe('GET /api/articles', () => {
     });
     test('returns an array of articles which have the following properties', () => {
         return request(app).get("/api/articles").expect(200).then(({body}) => {
-            expect(body.articles[0]).toHaveProperty("author", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("title", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("article_id", expect.any(Number))
-            expect(body.articles[0]).toHaveProperty("topic", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("created_at", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("votes", expect.any(Number))
-            expect(body.articles[0]).toHaveProperty("article_img_url", expect.any(String))
-            expect(body.articles[0]).toHaveProperty("comment_count", expect.any(String))
+            body.articles.forEach((article) => {
+            expect(article).toHaveProperty("author", expect.any(String))
+            expect(article).toHaveProperty("title", expect.any(String))
+            expect(article).toHaveProperty("article_id", expect.any(Number))
+            expect(article).toHaveProperty("topic", expect.any(String))
+            expect(article).toHaveProperty("created_at", expect.any(String))
+            expect(article).toHaveProperty("votes", expect.any(Number))
+            expect(article).toHaveProperty("article_img_url", expect.any(String))
+            expect(article).toHaveProperty("comment_count", expect.any(String))  
+            })
+
         })
     });
     test('returns the articles in descending date order and removes the body property', () => {
@@ -280,4 +289,25 @@ describe('GET /api/users', () => {
             })
         })
     });
+});
+describe('GET /api/articles with queries', () => {
+    test('returns a 200 status code and filters to return specified topics only', () => {
+        return request(app).get("/api/articles?topic=mitch").expect(200).then(({body}) => {
+            expect(body.articles).toHaveLength(12);
+            body.articles.forEach((article) => {
+                expect(article).toHaveProperty("topic", "mitch");
+            })
+        })
+    });
+    test('returns 404 if topic doesnt exist', () => {
+        return request(app).get("/api/articles?topic=random-topic").expect(404).then(({body}) => {
+            expect(body.message).toBe("Topic Doesn't Exist!");
+        })
+    });
+    test('returns 200 if topic exists with no article', () => {
+        return request(app).get("/api/articles?topic=paper").expect(200).then(({ body }) => {
+            expect(body.articles).toHaveLength(0)
+        })
+    });
+
 });

@@ -3,18 +3,33 @@ const db = require("../db/connection")
 exports.selectTopics = () => {
 return db.query(`
 SELECT * FROM topics
-`).then((result) => {
-    return result.rows
+`).then(({rows}) => {
+    return rows
 })
-
 }
 
 exports.selectArticleById = (article_id) => {
 
     return db.query(`
-    SELECT * FROM articles
-    WHERE article_id = $1
-    `, [article_id]).then(({rows}) => {
+    SELECT
+      articles.author,
+      articles.title,
+      articles.article_id,
+      articles.topic,
+      articles.body,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.comment_id) AS comment_count
+    FROM
+      articles
+    LEFT JOIN
+      comments ON articles.article_id = comments.article_id
+    WHERE
+      articles.article_id = $1
+    GROUP BY
+      articles.article_id;
+  `, [article_id]).then(({rows}) => {
         if (rows.length === 0){
             return Promise.reject({status : 404, message : 'Article Does Not Exist!'})
         }   else {
@@ -23,29 +38,38 @@ exports.selectArticleById = (article_id) => {
     })
  }
 
- exports.selectArticles = () => {
-    return db.query(`
-    SELECT
-    articles.author,
-    articles.title,
-    articles.article_id,
-    articles.topic,
-    articles.created_at,
-    articles.votes,
-    articles.article_img_url,
-    COUNT(comments.comment_id) AS comment_count
-  FROM
-    articles
-  LEFT JOIN
-    comments ON articles.article_id = comments.article_id
-  GROUP BY
-    articles.article_id
-  ORDER BY
-    articles.created_at DESC;
-    `).then(({rows}) => {
-        return rows
-    })
-}
+ exports.selectArticles = (topic) => {
+    return exports.selectTopics().then((topics) => {
+      const validTopics = {};
+      topics.forEach((row) => {
+        validTopics[row.slug] = row.slug;
+      });
+  
+      let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+          COUNT(comments.comment_id) AS comment_count FROM articles
+        LEFT JOIN
+          comments ON articles.article_id = comments.article_id`;
+      const values = [];
+  
+      if (topic in validTopics) {
+        queryStr += ` WHERE articles.topic = $1`;
+        values.push(topic);
+      } else if (topic !== undefined && !(topic in validTopics)) {
+        return Promise.reject({ status: 404, message: "Topic Doesn't Exist!" });
+      }
+  
+      queryStr += ` GROUP BY
+          articles.article_id
+          ORDER BY
+          articles.created_at DESC;
+          `;
+  
+      return db.query(queryStr, values).then(({ rows }) => {
+        return rows;
+      });
+    });
+  };
+  
 
 exports.selectCommentsByArticleId = (article_id) => {
 return db.query(`
