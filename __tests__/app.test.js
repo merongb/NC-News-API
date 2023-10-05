@@ -56,8 +56,13 @@ describe('GET /api/articles/:article_id', () => {
            expect(body.article).toHaveProperty("created_at", expect.any(String));
            expect(body.article).toHaveProperty("votes", expect.any(Number));
            expect(body.article).toHaveProperty("article_img_url", expect.any(String));
-           expect(body.article).toHaveProperty("comment_count", "11")
         })
+    });
+    test('returns the comment count for the article by id ', () => {
+        return request(app).get("/api/articles/1").expect(200).then(({body}) => {
+            expect(body.article).toHaveProperty("comment_count", "11")  
+        })
+
     });
     test('returns 404 error when id number doesnt exist with a message', () => {
         return request(app).get("/api/articles/9999").expect(404).then(({body}) => {
@@ -299,8 +304,10 @@ describe('GET /api/articles with queries', () => {
             expect(body.message).toBe("Topic Doesn't Exist!");
         })
     });
+    test('returns 200 if topic exists with no article', () => {
+        return request(app).get("/api/articles?topic=paper").expect(200).then(({ body }) => {
+            expect(body.articles).toHaveLength(0)
+        })
+    });
 
-});
-describe('Name of the group', () => {
-    
 });
