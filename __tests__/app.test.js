@@ -5,7 +5,7 @@ const seed = require("../db/seeds/seed")
 const testData = require("../db/data/test-data/index")
 const endpoints = require("../endpoints.json")
 const jestSorted = require("jest-sorted")
-
+const {toBeSortedBy} = require("jest-extended")
 beforeEach(() => {
     return seed(testData)
 })
@@ -307,6 +307,21 @@ describe('GET /api/articles with queries', () => {
     test('returns 200 if topic exists with no article', () => {
         return request(app).get("/api/articles?topic=paper").expect(200).then(({ body }) => {
             expect(body.articles).toHaveLength(0)
+        })
+    });
+    test('returns a 200 status code and sorts articles by queried sort by as defualt desc', () => {
+        return request(app).get("/api/articles?sort_by=article_id").expect(200).then(({body}) => {
+            expect(body.articles).toBeSortedBy("article_id", { descending: true })
+        })
+    });
+    test('returns 200 status code and articles by specified sortby and with a order query', () => {
+        return request(app).get("/api/articles?sort_by=comment_count&order=asc").expect(200).then(({body}) => {
+            expect(body.articles).toBeSortedBy("comment_count", { acsending: true, coerce: true })
+        })
+    });
+    test('returns a 404 error if column doesnt exist or order isnt asc or desc', () => {
+        return request(app).get("/api/articles?sort_by=DROPTABLE&order=DROPDATABASE").expect(404).then(({body}) => {
+            expect(body.message).toBe("Doesn't Exist!");
         })
     });
 

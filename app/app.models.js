@@ -38,15 +38,27 @@ exports.selectArticleById = (article_id) => {
     })
  }
 
- exports.selectArticles = (topic) => {
+ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
     return exports.selectTopics().then((topics) => {
       const validTopics = {};
       topics.forEach((row) => {
         validTopics[row.slug] = row.slug;
       });
+
+      const validSortBys = {
+        author: "author",
+        title: "title",
+        article_id: "article_id",
+        topic: "topic",
+        body: "body",
+        created_at: "created_at",
+        votes: "votes",
+        article_img_url: "article_img_url",
+        comment_count: "comment_count"
+      }
   
       let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
-          COUNT(comments.comment_id) AS comment_count FROM articles
+          COUNT(comments.article_id) AS comment_count FROM articles
         LEFT JOIN
           comments ON articles.article_id = comments.article_id`;
       const values = [];
@@ -57,12 +69,22 @@ exports.selectArticleById = (article_id) => {
       } else if (topic !== undefined && !(topic in validTopics)) {
         return Promise.reject({ status: 404, message: "Topic Doesn't Exist!" });
       }
-  
-      queryStr += ` GROUP BY
-          articles.article_id
-          ORDER BY
-          articles.created_at DESC;
-          `;
+      
+      queryStr += ` GROUP BY articles.article_id`
+          
+        if (sort_by in validSortBys)  {
+          queryStr += ` ORDER BY ${sort_by}`
+        } else if (sort_by !== undefined && !(sort_by in validSortBys)){
+          return Promise.reject({ status: 404, message: "Doesn't Exist!" })
+        } 
+        if (order === "asc" ){
+          queryStr += ` ASC` 
+        }   else if (order === "desc"){
+          queryStr += ` DESC`
+        }   else if (order !== undefined && order !== "ASC" && order !== "DESC"){
+          return Promise.reject({ status: 404, message: "Doesn't Exist!" })
+        }
+           ;
   
       return db.query(queryStr, values).then(({ rows }) => {
         return rows;
