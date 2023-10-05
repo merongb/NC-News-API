@@ -29,5 +29,5 @@ To seed the local database run the following scripts in order:
 
 You need the following versions of Node and PostgreSQL to run this project :
 
-- Node v1.0.0
-- PostgreSQL ?
+- Node v18.17.1
+- psql (PostgreSQL) 14.9 (Homebrew)
