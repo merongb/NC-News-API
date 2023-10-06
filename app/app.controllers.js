@@ -8,7 +8,8 @@ const { selectTopics,
     removeCommentById,
     selectCommentById,
     selectUserByUsername,
-    editCommentVotes } = require("./app.models")
+    editCommentVotes,
+     } = require("./app.models")
 const endpoints = require('../endpoints.json')
 
 
@@ -155,6 +156,6 @@ exports.patchCommentById = async (req, res, next) => {
       next(err);
     }
   };
-  
+
 
 
