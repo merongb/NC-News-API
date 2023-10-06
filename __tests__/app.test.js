@@ -187,7 +187,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 describe('PATCH /api/article/:article_id', () => {
     test('returns a 200 status code and the updated article', () => {
         const updatedVotes = {
-            inc_votes: 5,
+            inc_votes: -5,
         }
         return request(app).patch("/api/articles/1").send(updatedVotes).expect(200).then(({body}) => {
             expect(body.article).toMatchObject({
@@ -197,7 +197,7 @@ describe('PATCH /api/article/:article_id', () => {
                     author: 'butter_bridge',
                     body: 'I find this existence challenging',
                     created_at: '2020-07-09T20:11:00.000Z',
-                    votes: 105,
+                    votes: 95,
                     article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'    
             })
         })
@@ -342,6 +342,60 @@ describe('GET "/api/users/:username"', () => {
     test('returns 404 when username entered is a number', () => {
         return request(app).get("/api/users/99").expect(404).then(({body}) => {
             expect(body.message).toBe("User Not Found")
+        })
+    });
+});
+describe('PATCH /api/comments/:comment_id', () => {
+    test('returns a 200 status code and the updated article', () => {
+        const updatedVotes = {
+            inc_votes: -1
+        }
+        return request(app).patch("/api/comments/1").send(updatedVotes).expect(200).then(({body}) => {
+            expect(body.comment).toMatchObject({
+                comment_id: 1,
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                article_id: 9,
+                author: 'butter_bridge',
+                votes: 15,
+                created_at: '2020-04-06T12:17:00.000Z'
+            })
+        })
+    });
+    test('return 404 and comment does not exist when comment id doesnt exist', () => {
+        const updatedVotes = {
+            inc_votes: 1
+        }
+        return request(app).patch("/api/comments/999").send(updatedVotes).expect(404).then(({body}) => {
+            expect(body.message).toBe("Comment does not exist")
+        })
+    });
+    test('returns 400 bad request when given a bad comment id', () => {
+        const updatedVotes = {
+            inc_votes: 1
+        }
+        return request(app).patch("/api/comments/id_99").send(updatedVotes).expect(400)
+    });
+    test('returns 400 status code when wrong data is passed ', () => {
+        const updatedVotes = {
+            inc_votes: "DROPDATABASE",
+        }
+        return request(app).patch("/api/comments/1").send(updatedVotes).expect(400).then(({body}) => {
+            expect(body.message).toBe("inc_votes must be a number");
+        })
+    });
+    test('returns 200 and the comments when inc_votes is missing', () => {
+        const updatedVotes = {
+            DROPDATA: "DROPDATABASE"
+        }
+        return request(app).patch("/api/comments/5").send(updatedVotes).expect(200).then(({body}) => {
+            expect(body.comment).toMatchObject({
+                comment_id: 5,
+                body: 'I hate streaming noses',
+                article_id: 1,
+                author: 'icellusedkars',
+                votes: 0,
+                created_at: '2020-11-03T21:00:00.000Z'
+            });
         })
     });
 });

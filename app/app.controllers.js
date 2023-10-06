@@ -7,7 +7,8 @@ const { selectTopics,
     updateArticleVotesById,
     removeCommentById,
     selectCommentById,
-    selectUserByUsername } = require("./app.models")
+    selectUserByUsername,
+    editCommentVotes } = require("./app.models")
 const endpoints = require('../endpoints.json')
 
 
@@ -134,3 +135,26 @@ exports.getUserByUsername =  (req, res, next) => {
          })
     
 }
+
+exports.patchCommentById = async (req, res, next) => {
+    try {
+      const { comment_id } = req.params;
+      const { inc_votes } = req.body;
+  
+      const comment = await selectCommentById(comment_id);
+  
+      if (!inc_votes) {
+        res.status(200).send({ comment });
+      } else if (typeof inc_votes !== "number") {
+        return res.status(400).send({ message: 'inc_votes must be a number' });
+      } else {
+        const updatedComment = await editCommentVotes(comment_id, inc_votes);
+        res.status(200).send({ comment: updatedComment });
+      }
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+
+
