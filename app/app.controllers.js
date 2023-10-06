@@ -7,7 +7,7 @@ const { selectTopics,
     updateArticleVotesById,
     removeCommentById,
     selectCommentById,
-     } = require("./app.models")
+    selectUserByUsername } = require("./app.models")
 const endpoints = require('../endpoints.json')
 
 
@@ -122,4 +122,15 @@ selectUsers().then((users) => {
 }).catch((err) => {
     next(err)
 })
+}
+
+exports.getUserByUsername =  (req, res, next) => {
+        const { username } = req.params;       
+        
+    selectUserByUsername(username).then((user) => {
+          res.status(200).send({ user })  
+         }).catch((err) => {
+            next(err)
+         })
+    
 }

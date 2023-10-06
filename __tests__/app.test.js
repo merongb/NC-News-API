@@ -326,3 +326,22 @@ describe('GET /api/articles with queries', () => {
     });
 
 });
+describe('GET "/api/users/:username"', () => {
+    test('returns 200 status code and the user searched ', () => {
+        return request(app).get("/api/users/lurker").expect(200).then(({body}) => {
+            expect(body.user).toHaveProperty("username" , "lurker")
+            expect(body.user).toHaveProperty("name" , "do_nothing")
+            expect(body.user).toHaveProperty("avatar_url" , "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png")
+        })
+    });
+    test('returns 404 and User not found message when user doesnt exist', () => {
+        return request(app).get("/api/users/fake_username").expect(404).then(({body}) => {
+            expect(body.message).toBe("User Not Found")
+        })
+    });
+    test('returns 404 when username entered is a number', () => {
+        return request(app).get("/api/users/99").expect(404).then(({body}) => {
+            expect(body.message).toBe("User Not Found")
+        })
+    });
+});

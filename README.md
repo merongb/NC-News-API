@@ -1,7 +1,6 @@
 # Northcoders News API
 
-This project entails the creation of an API that facilitates programmatic retrieval of application data. As part of the development process, the aim is to build
-a robust backend service, ensuring seamless data delivery to the frontend architecture, which closely mirrors the functionality seen in real-world applications.
+This project entails the creation of an API that facilitates programmatic retrieval of application data. As part of the development process, the aim is to build a robust backend service, ensuring seamless data delivery to the frontend architecture, which closely mirrors the functionality seen in real-world applications.
 
 Here is a link to the hosted version
 https://news-article-slsk.onrender.com/api

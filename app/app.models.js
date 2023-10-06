@@ -164,3 +164,18 @@ exports.removeCommentById = (comment_id) => {
         `, [comment_id])
     })
 }
+
+exports.selectUserByUsername = (username) => {
+  if (typeof username === "number"){
+    return Promise.reject({status : 400, message : "Bad Request"})
+}
+
+  return db.query(`
+  SELECT * FROM users
+  WHERE username = $1 
+  `, [username]).then(({rows}) => {
+    if (rows.length === 0){
+      return Promise.reject({status: 404, message : "User Not Found"})
+    } else return rows[0]
+  })
+}

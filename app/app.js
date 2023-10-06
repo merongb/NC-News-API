@@ -8,7 +8,8 @@ const { getTopics,
         postCommentByArticleId,
         patchArticleVotesById,
         deleteCommentById,
-        getUsers } = require("./app.controllers")
+        getUsers,
+        getUserByUsername } = require("./app.controllers")
 app.use(express.json())
 
 app.get("/api/topics" , getTopics)
@@ -20,6 +21,7 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 app.patch("/api/articles/:article_id", patchArticleVotesById)
 app.delete("/api/comments/:comment_id", deleteCommentById)
 app.get("/api/users", getUsers)
+app.get("/api/users/:username", getUserByUsername)
 
 app.use((err, req, res, next) => {
     if (err.code === "23503"){
